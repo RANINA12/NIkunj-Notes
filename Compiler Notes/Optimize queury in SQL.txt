@@ -1,0 +1,5 @@
+How to  write the optimize query in SQL , always try to write Deterministic query , means for one input one state , no other state .
+
+for example for using a now() ; and now() value changes in fraction so this is non - deterministic 
+
+create a variable now and then use this variable as the input or for the validation.

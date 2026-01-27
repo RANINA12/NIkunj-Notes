@@ -1,0 +1,5 @@
+java core concept 
+
+BufferedReader  -> Scanner se best hai , fast read karta hai input and always take input as a String we need to convert parse method to convert it and  use .readLine method 
+InputStreamReader - read the input 
+BufferedReader b = new BufferedReader(new InputStreamReader(System.in)); 

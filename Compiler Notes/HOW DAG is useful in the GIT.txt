@@ -1,0 +1,13 @@
+HOW DAG is useful in the GIT  , how it uses  DAG to keep the history of previous commit and its parent 
+
+Suppose no commit happen and our DAG is empty , as soon as the commit happen  a node created in the tree and this is our main branch , and if are done .
+
+suppose we want to add in the feature in the main file , so we add new feature file and made some changes and the parent of this feature will be the commit c1 which is earlier created , no at the same time a team made some change in the file and let say c3 commit and now the main branch is cc3 and its parent is c1 . and c2 do not know c3 it only knows the c1 ass parent , and c2 is ready with all changes , now  we want to make merge , here  for c2 base is c1 and for c3 base is c1 and c2 and c3 do not know each other , here where DAG traversal comes to picture , it keep track of previous  records 
+
+Now it load all three file  c1 , c2 , c3 and merge will happen on this bases 
+
+BASE  -> main parent common in all current use file (Common ancestor) 
+OUR  -> current main file
+THIER -> feature that we want to add 
+
+All three file is compared and we merged it , if no conflict ....
