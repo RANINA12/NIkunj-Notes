@@ -1,0 +1,60 @@
+what CD works 
+
+we will understand with the simple code how this works ........
+suppose we have a simple code how it works 
+
+int main(){
+int a = 10;
+int c = a+2;
+}
+
+Here first  rule the lexical analysis ,  why is it importance  we need to validate that   the  letters written in the code is valid or not , who decide what is valid , what is not valid , there need to some rules , so the regular expression comes into the picture  the regular expression decide that the words used in the  code is valid  , and follow the regex , with the help of the  finite automata  theory , but now the question arises how even automata theory working ,  the state and char is store in the in 2d array  and we are dealing with the final and starting state .
+
+now the lexical analysis is done , And now the token are created with the literal , operator , keyword ,   Identifier , delimiter 
+
+Lexeme	Token Type
+int	KEYWORD
+main	IDENTIFIER
+( )	DELIMITER
+{ }	DELIMITER / PUNCTUATOR
+a, c	IDENTIFIER
+10, 2	INTEGER_LITERAL
+=	OPERATOR
++	OPERATOR
+;	DELIMITER
+
+and this are store in the symbol table - Identifier  -> function name and variable  ->   data type 
+and literal are store in the Literal table  like 10 , 3 , 2 ,"Hello"
+Token are store in the  token table with  token type and value used in the semantics analysis ,  and this token are in the stack table or the list data structure as per the suitable as we need to pop for the grammar rules . 
+
+Scanner part done here , now the parse tree is generated , to validate the syntax we have written is valid or not if is not valid than throws an error .
+
+What happens how this syntax is validate , for this we need to write the grammar and its production rules , here the regex will not work , why it will not work because , regex solves the linear problem , but in programming there may be the instances where the recursive functions is  being called , what regex will not solve where it end , it can be solve by tree data stucture  or the stack , so after validating the syntax , a parse tree is generate with all the information , no matters what is it (includes termination , expression and all ) , but these what the compiler do not want , compiler only want  important features so the abstract tree is being constructed  what the compiler want and thes AST is used ti validate the semantics rules store in the various map to check the tyoe , scope and other needful things.
+
+How to generate a AST of any Code , that the importance 
+suppose we have the simple code of the 
+b= 3;
+a=b+5;
+
+so what is the AST  of this simple code , we need to write it 
+
+PROGRAM
+ ├── =
+ │    ├── Identifier(b)
+ │    └── Literal(3)
+ └── =
+      ├── Identifier(a)
+      └── +
+           ├── Identifier(b)
+           └── Literal(5)
+
+Now we know that how and why AST needed as it maintain the flow and the semantics analysis of the code. And with the help of the AST a TAC is generated of the code 
+
+Here the most Important , AST help to generates the TAC , by the post order traversal  ,  but how this TAC is made with AST big questions.
+
+some optimization is hardcoded
+
+TAC se target code and we are done 
+
+
+

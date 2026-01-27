@@ -1,0 +1,12 @@
+Parse tree , how the compiler knows from the grammar which grammar to pick and  to whom not pick , as there is can be large number of the production rule , if we scan each and very rules , then the simple program of Hello World would have taken the 10-15 minutes .
+
+For this a 2D Array is maintain like a table format known as the parse table , and  it maintain the lookup value , which tell what is the current state and what is next in the token list , it matches the  row and column  and link to that particular rows .
+
+Why Ambiguity is problem ?? and what are the way to reduce ambiguity?
+
+IF the grammar is ambiguous then multiple parse tree can be form and compiler will get confuse  which operation is need to perform and this will break the flow of the program ,  if the grammar is ambiguous than the same expression can have the multiple output , and dangling if and else problem will also occur which "else" is assign to which "if" .
+
+So how the scientist came up to remove the ambiguity ?? They proposed two Idea to remove this problem 
+The first is to write the rule  where there is ambiguity and remove it , This approach is not feasible as we need to maintain two thing grammar and the rules . so compiler need to validate two thing 
+
+And the second Idea is proposed to write a grammar in such a way that no chance of ambiguity , based on precedence and associativity called precedence cascade .
