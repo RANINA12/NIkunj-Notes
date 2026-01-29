@@ -1,0 +1,15 @@
+Runtime Environment  and its Importance in CD . Role of the Memory management in CD  
+
+When a function is called a stack memory is assigned to the  function , and it stay till the function explicitly destroy . This is very important . To maintain who can access whom and their scope we have the Activation tree which tell the flow and Activation records hold every information related to it . Remember its at runtime , symbol table doing its work at the compile time . 
+
+under the Activation record we have two field named control link and Access link , Control link tell who calls the program , meanwhile the  Access table define the scope of the particular function . Again we have problem when we pass a function inside a function it cannot able to see to whose record it belong , I have right to access the  variable or not it does not know to overcame with this problem we start passing a access link with function . 
+
+Other memory is the heap memory , this memory is allocated to object in C++ or java or to those variable who is  live at the global throughout to the program , the allocating and deallocating the memory in the heap is managed by the project memory who is responsible for assigning the contiguous memory in the heap and if no memory then it connect with the physical memory of the OS .
+
+The execution of the program also depend on the variable from where it getting accessed , if it getting accessed from the cache or the register it will  accessed in ns , and time increase as the memory level access .
+
+here comes the concept of the program locality in program , which gave us idea of pattern which can be used in pagination and reduced the access time , there are two type of the locality -> 1 Temporal --- Here memory location which is more likely  to be access again are kept in mind , so that it can be brought into cache by pagination
+
+-> 2 Spatial locality this is important it tell the next location which is more likely to be access are brought into the memory . 
+
+in this way the access time can be reduced , the locality say 90% of time program reuse the 10% of the code.

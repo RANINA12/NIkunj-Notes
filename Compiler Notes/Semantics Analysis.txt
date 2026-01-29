@@ -1,0 +1,18 @@
+Semantics Analysis -> After the generation of the AST we move to Semantic analysis , since we store the symbol in the symbol table we need some one to tell the flow for the flow and applying the Semantics rule we have the SDD (syntax directed definition) . This ensure the semantic check in the code , by two method inherited and synthesized attribute 
+
+Inherited attribute means  the child is depend on the parent it described the scope and type of the non terminal 
+Synthesized attribute have child-> parent dependency , value of the parent is depend on the  child . 
+
+This tell the flow and semantic check on the code . For this two term is used annotated tree , it tell the value and dependency graph show the flow , which value is computed first .
+
+
+But here is the problem arises , that dependency graph is not able to detect the  cycle in the graph . So we write our grammar in such way it is L and S attribute .
+
+The term s attribute means -  make the grammar is synthesize only child -> parent dependency , but here we can face the critical error how to determine the scope and the data type which is parent-> child dependency 
+
+so the L attribute is introduced which tell us two thing and if one of them follow then it ensure no cycle the first one is that the grammar should be in S attribute or It should not have the right dependency . Which mean suppose if there is a grammar A-> a1 a2 a3 a4 a5
+
+so the a5 can depend on a1 a2 a3 a4 as the a1 a2 is calculated 
+but a1 should not depend on the a2 - a5 as they still not be calculated in the parse tree . 
+
+In this way we can remove the cycle in the SDD and semantic analyse automatically verifies .
