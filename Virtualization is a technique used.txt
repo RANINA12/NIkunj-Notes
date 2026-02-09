@@ -1,0 +1,9 @@
+Virtualization is a technique used to share physical hardware resources (CPU, RAM, disk, network) among multiple isolated environments, commonly used in cloud computing.
+
+Using virtualization, multiple virtual machines can run on a single physical machine, where each virtual machine behaves like an independent computer with its own operating system.
+
+Each operating system running inside a virtual machine feels that it owns the hardware, even though the actual hardware is shared. This illusion is created by a component called the hypervisor.
+
+The hypervisor sits between the hardware and the virtual machines. It allocates hardware resources to each virtual machine and ensures isolation, so that one operating system or application cannot interfere with another.
+
+With the help of virtualization, we can create multiple virtual environments on a single physical machine and run different operating systems securely and efficiently.
