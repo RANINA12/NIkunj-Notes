@@ -1,0 +1,6 @@
+First Page will be enter date of birth (as original is 29/02/2004) , but surprise is on 28/02/26 so Actual will validate , else warning message  Forgot your own birthday  in funny way  
+After this , a new page , A dancing happy birth day wish with a short little message + song , then on a same page two button one will navigate to her lovely phots collage and a sweet message with creative design , one will navigate to cake cutting ceremony , where a knife and a cake with birth song on loop ,  drag a knife image and cut the cake ,  once drag a cake on particular place then cake cuts and a beautiful message pop up and this page ends here .
+
+In whole process designing should be the priority , as CSS matters a lot , it should looks attractive , infect a very attractive , so now tell what you want . 
+
+login page design , should be under teddy bear , pop ups with date field so see can enter it , In my project functionality is less important creativity is more

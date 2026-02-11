@@ -6,6 +6,7 @@ Each operating system running inside a virtual machine feels that it owns the ha
 
 The hypervisor sits between the hardware and the virtual machines. It allocates hardware resources to each virtual machine and ensures isolation, so that one operating system or application cannot interfere with another.
 
+<<<<<<< HEAD
 With the help of virtualization, we can create multiple virtual environments on a single physical machine and run different operating systems securely and efficiently.
 
 When Ubuntu is installed as a virtual machine, it runs as a guest operating system with its own Linux kernel, independent of the host operating system (Windows or macOS).
@@ -23,3 +24,6 @@ Execution in Ubuntu VM
 Ubuntu executes its compiled binary using the Linux kernel.
 The hypervisor maps Ubuntu’s virtual CPU and memory to the real hardware.
 Windows only sees the VM as a running process; it does not execute Ubuntu code.
+=======
+With the help of virtualization, we can create multiple virtual environments on a single physical machine and run different operating systems securely and efficiently.
+>>>>>>> dc7012884a2fd4907e75d0181766c46f5b57f3ca
