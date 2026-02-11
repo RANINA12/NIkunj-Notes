@@ -1,0 +1,28 @@
+As node is single threaded , how node handle 10000 requests concurrently ?
+
+Earlier Java handle multiple request concurrently with the help of the threads , but later it also shift to async wait and all this concept how it works we need to study ?
+
+How and what is happening is crucial it based on the design of the language , how it handle the code  process 
+
+
+Yes , Node is  single threaded ,  but at the same time Node can handle multiple request , this happens because , the non blocking code is shifted to the  C++ library  (libvu) , it do all the hard work and event loop tell once the process is completed  .
+
+What are the non blocking code ?? And yes if the code are Blocking in nature then one request is handle at a one time .
+
+Non blocking codes are -> 
+fetch(url)
+axios.get(url)
+http.request(...)
+https.request(...)
+await mongoose.find()
+await prisma.user.findMany()
+await pg.query()
+await mysql.query()
+fs.readFile("a.txt", cb)
+fs.writeFile("a.txt", data, cb)
+fs.promises.readFile("a.txt")
+setTimeout(fn, 0)
+setInterval(fn, 1000)
+setImmediate(fn)
+
+
