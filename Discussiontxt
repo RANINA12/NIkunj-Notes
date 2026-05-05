@@ -1,0 +1,14 @@
+structure -  class diagram , deployment , object
+behavioural- Activity , use case , state machine  , Interactive method -> Sequence diagram 
+
+variable is also called characters
+class diagram ....
+Activity diagram....
+sequence diagram ....
+
+	Shopify Order GraphQL
+	Shopify Web-hook
+	Shopify Order Life cycle
+	Sir ka document 
+	Apache superset - and how we are connect with Tathya dashboard 
+	Activity diagram and all 

@@ -1,0 +1,30 @@
+----------------------QOH ---------------------------------------
+SELECT ii.product_id, 
+SUM(ii.quantity_on_hand_total) AS total_qoh
+FROM inventory_item ii
+JOIN product_store_facility psf ON ii.facility_id = psf.facility_id AND psf.thru_date is NULL
+WHERE psf.product_store_id = '100010'
+AND ii.quantity_on_hand_total <> 0
+GROUP BY ii.product_id;
+
+
+
+------------------PENDING ORDER IN OMS --------------------------
+  
+SELECT oi.product_id,
+SUM(*) AS Pending_order
+FROM order_header oh 
+JOIN order_item oi ON oh.order_id = oi.order_id
+WHERE oh.status_id IN ('ORDER_APPROVED', 'ORDER_CREATED', 'ORDER_HOLD', 'ORDER_PROCESSING') 
+AND oh.product_store_id = '100010'
+GROUP BY oi.product_id;
+
+-------------------safety stock / Threshold -------------------------------
+
+SELECT pf.product_id , SUM(pf.minimum_stock)
+FROM product_facility pf 
+JOIN product_store_facility psf 
+ON psf.facility_id = pf.facility_id 
+WHERE psf.product_store_id = '100010'
+GROUP BY product_id;
+
