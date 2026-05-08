@@ -1,0 +1,38 @@
+Part 1: Order Life Cycle Documentation
+1. Architecture & Core Interfaces
+Before diving into the process flow, it is important to understand the underlying tool architecture that manages connections to AWS SQS.
+ToolFactory (Interface): Manages the lifecycle of a tool. It mandates three core methods:
+init(): Prepares the environment.
+getInstance(): Retrieves the active instance/connection.
+destroy(): Cleans up resources.
+SQSToolFactory (Implementation): Implements ToolFactory<V> specifically for AWS SQS.
+init(): Connects to AWS and initializes the cache, preparing a place to store connections for reuse.
+getInstance(): Establishes and returns the actual SQS connection.
+destroy(): Terminates the tool support and closes connections when the application ends.
+SQSTool (Class): Provides the specific operations for interacting with SQS. Key methods include:
+getClient(): Returns the SQS client.
+getQueueUrl(): Retrieves the endpoint URL.
+receiveMessage(): Requests messages from the SQS client.
+deleteMessage(): Removes a single message from the queue.
+deleteMessageBatch(): Removes multiple messages from the queue efficiently.
+canConnect(): Verifies if the SQS client is connected.
+2. The Execution Flow: Processing SQS Orders
+Phase A: Ingestion (ConsumeSqsOrderMessage)
+Initialization: The process begins by initializing the SQSTool (passing the tool name, SQS.class, and SystemMessageRemoteId).
+Fetch Messages: It calls sqsTool.receiveMessage(), requesting a batch of messages (maximum of 10) using the SQSClient and endpoint URL.
+Parse & Map Data:
+The raw messages are converted into JSON format (bodyMap).
+The system extracts the X-Shopify-Shop-Domain from the message metadata.
+It queries the database to find the corresponding SystemMessageRemoteId (smrId) for that specific Shopify domain.
+It extracts the OrderId from the JSON payload.
+Group Orders: The system organizes the orders into a Map called orderIdsByRemotes, structured as [smrId : List<OrderId>].
+
+Phase B: Staging Data (stage#ShopifyOrder) 
+5. Iterate & Call: The system iterates over the orderIdsByRemotes map. For each smrId, it calls the stage#ShopifyOrder service, passing three fields: orderIdList, systemMessageRemoteId, and _jobRunId. 
+
+6. Fetch Order Details: Inside the staging service, it loops through the orderIdList and calls get#ShopifyOrderDetails for each order. * Inputs passed: smrId, shopifyOrderId 
+7. GraphQL Requests (Send#ShopifyGraphql): * The get#ShopifyOrderDetails service generates GraphQL queryText. * It makes a service call to Send#ShopifyGraphql to get the Order Header. 
+Phase C: Aggregation & Cleanup 
+8. Upload to MDM: Once all unified order details are fetched, the stage#ShopifyOrder service aggregates the JSON data into a file. It then calls uploadDataManagerFile to push this file to the Master Data Management (MDM) system. 
+9. Queue Cleanup: Finally, control returns to SqsConsumeOrder. For all the messages that were successfully processed and staged, it calls sqsTool.deleteMessageBatch() to remove them from the AWS SQS queue.
+
