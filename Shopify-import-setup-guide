@@ -1,0 +1,229 @@
+Shopify Product & Order Import
+Local Setup Guide  —  NextGen OMS + Maarg
+Prerequisites  
+Go to NextGen-OMS -> Hamburger Menu -> under the shopify section -> shopify shop.  
+Have your Shopify Access Token, Client Secret, and Shop ID ready before starting.
+https://nextgen-oms.hotwax.io/
+
+Step 1: Create the Shopify Shop
+Log  in to https://ip6-localhost:8443/
+Navigate to: Hamburger Menu → Shopify Section → Shopify Shop
+Click Create New Shop and fill in:
+
+Field
+Value
+Shop ID
+Eg. 10000
+Shopify Config ID
+Eg. 10000
+
+
+Save / click Create New Shop
+Step 2: Update ProductStore Entity
+Open the ProductStore entity on localhost (Maarg)
+Find and update:
+
+Field
+Set Value To
+product_identifier_enum_id
+SHOPIFY_PRODUCT_SKU
+
+Step 3: Create SystemMessageRemote Entry
+Open the SystemRemoteMessage entity and create a new entry.
+Fill in all fields:
+
+Field
+Value
+System Message Remote ID
+<your-chosen-id>  ←  note this, used throughout
+Send URL
+Get from NextGen → Shopify URL Section
+Username
+<your username>
+Password
+<Access Token>  (same used when creating the shop)
+Shared Secret
+<Client Secret>
+Send Shared Secret
+<Access Token>
+Auth Header Name
+X-Shopify-Access-Token
+Internal ID
+Eg. 10000
+Product Store ID
+demo
+Access Scope Enum ID
+Access RW Access
+
+
+Step 4: Import XML Configuration
+Open: localhost:8080 → Tools → Entity → Import → XML Text
+In the XML below, replace every instance of SHOP_CONFIG_OMS with your System Message Remote ID, then paste and import.
+
+Note  SHOP_CONFIG_OMS appears multiple times — replace all occurrences before importing.
+
+
+<moqui.basic.EnumerationType description="OMS System Message Type Enum"
+  enumTypeId="OMSMessageTypeEnum"/>
+
+<moqui.service.job.ServiceJob
+  jobName="queue_BulkQuerySystemMessage_BulkProductAndVariantsById"
+  serviceName="co.hotwax.shopify.system.ShopifySystemMessageServices.queue#BulkQuerySystemMessage"
+  cronExpression="0 0 * * * ?" paused="Y" instanceOfProductId="QUEUE_UPD_PRD_FEED">
+    <parameters parameterName="systemMessageTypeId"
+      parameterValue="BulkProductAndVariantsByIdQuery"/>
+    <parameters parameterName="systemMessageRemoteId"
+      parameterValue="SHOP_CONFIG_OMS"/>
+    <parameters parameterName="filterQuery" parameterValue=""/>
+    <parameters parameterName="fromDate" parameterValue=""/>
+    <parameters parameterName="thruDate" parameterValue=""/>
+</moqui.service.job.ServiceJob>
+
+<moqui.service.message.SystemMessageType
+  systemMessageTypeId="BulkProductAndVariantsByIdQuery"
+  parentTypeId="ShopifyBulkQuery"
+  sendServiceName="co.hotwax.shopify.system.ShopifySystemMessageServices.send#BulkQuerySystemMessage"
+  sendPath="component://shopify-connector/template/graphQL/BulkProductAndVariantsByIdQuery.ftl"
+  consumeServiceName="co.hotwax.shopify.system.ShopifySystemMessageServices.consume#BulkOperationResult"
+  receivePath="${contentRoot}/shopify/BulkProductAndVariantsByIdQuery/BulkOperationResult-${systemMessageId}-${nowDate}.jsonl">
+    <parameters parameterName="consumeSmrId" parameterValue="SHOP_CONFIG_OMS"
+      systemMessageRemoteId="SHOP_CONFIG_OMS"/>
+    <parameters parameterName="namespace" parameterValue=""/>
+</moqui.service.message.SystemMessageType>
+
+<moqui.service.message.SystemMessageType systemMessageTypeId="ProductUpdatesFeedNew"
+  consumeServiceName="co.hotwax.orderledger.system.FeedServices.consume#UpdatedProductHistories"/>
+<moqui.basic.Enumeration description="Products Updates Feed"
+  enumId="ProductUpdatesFeedNew" enumTypeId="OMSMessageTypeEnum"/>
+
+<moqui.service.message.SystemMessageType systemMessageTypeId="GenerateOMSUpdateProductsFeedNew"
+  sendServiceName="co.hotwax.sob.system.FeedServices.generate#OMSFeedNew"
+  consumeServiceName="co.hotwax.orderledger.system.FeedServices.transform#JsonLToJsonForUpdatedProducts"/>
+
+<moqui.basic.Enumeration description="Generate OMS Update Products Feed"
+  enumId="GenerateOMSUpdateProductsFeedNew" enumTypeId="SOBMessageTypeEnum"
+  relatedEnumId="ProductUpdatesFeedNew" relatedEnumTypeId="OMSMessageTypeEnum"/>
+
+<moqui.basic.Enumeration description="Bulk Product Metafields Query"
+  enumId="BulkProductAndVariantsByIdQuery" enumTypeId="ShopifyMessageTypeEnum"
+  relatedEnumId="GenerateOMSUpdateProductsFeedNew" relatedEnumTypeId="ShopifyMessageTypeEnum"/>
+
+<moqui.service.job.ServiceJob
+  jobName="send_BulkProductAndVariantsByIdQueryProducedSystemMessages"
+  serviceName="org.moqui.impl.SystemMessageServices.send#AllProducedSystemMessages"
+  cronExpression="0 0/15 * * * ?" paused="Y">
+    <parameters parameterName="systemMessageTypeIds"
+      parameterValue="BulkProductAndVariantsByIdQuery"/>
+</moqui.service.job.ServiceJob>
+
+<moqui.service.job.ServiceJob jobName="queue_UpdatedProductIdsFeed" instanceOfProductId=""/>
+
+Product Import (Service Jobs)
+Navigate to: System → Service Job → Job → Job List. Run the three jobs below in order.
+Job 1: queue_BulkQuerySystemMessage_BulkProductAndVariantsById
+Job Settings
+Setting
+Value
+fromDate
+2023-04-01 00:00:00
+
+
+Parameters
+Parameter
+Value
+fromDate
+2023-04-01 00:00:00
+systemMessageRemoteId
+<your SystemMessageRemoteId>
+
+
+Click Update → Run Job → open Job Run and confirm hasError = N.  If Y, read the error before continuing.
+Job 2: send_BulkProductAndVariantsByIdQueryProducedSystemMessages
+Job Settings
+Setting
+Value
+fromDate
+2023-04-01 00:00:00
+
+
+Click Update → Run Job → open Job Run and confirm hasError = N.  If Y, read the error before continuing.
+Job 3: poll_BulkOperationResult_ShopifyBulkQuery
+Job Settings
+Setting
+Value
+fromDate
+2023-04-01 00:00:00
+
+
+Parameters
+Parameter
+Value
+consumeSmrId
+<your SystemMessageRemoteId>
+
+
+Click Update → Run Job → open Job Run and confirm hasError = N.  If Y, read the error before continuing.
+Order Import Setup
+Step 1: Resume Order Sync Jobs
+Navigate to: Application → HotWax Commerce → Shopify → Shopify Order Integration Setup
+Resume both jobs if currently paused:
+queue_ShopifyOrderSync
+sync_ShopifyOrderHistory
+
+Step 2: Update System Properties
+Under OrderSync System Properties, click Edit and set:
+
+Property
+Value
+newOrderSync.launchDate
+2023-04-08 00:00:00
+orderSyncHistory.lastSyncDate
+2023-04-08 00:00:00.0
+
+
+Note: Use the exact date formats shown. A different format will cause a timestamp error.
+
+Step 3: Run Order Sync Jobs
+Back in: System → Service Job → Job → Job List
+
+Job: sync_ShopifyOrderHistory
+Parameter
+Value
+additionalParameter
+{"thruDateBuffer": 1}
+fromDate
+2024-04-30 00:25:00
+runAsBatch
+true
+systemMessageRemoteId
+<your SystemMessageRemoteId>
+
+
+Click Update → Run Job → open Job Run and confirm hasError = N.  If Y, read the error before continuing.
+
+Job: queue_ShopifyOrderSync
+Parameter
+Value
+additionalParameter
+{"thruDateBuffer": 1}
+fromDate
+2024-04-30 00:25:00
+runAsBatch
+true
+systemMessageRemoteId
+<your SystemMessageRemoteId>
+
+
+Click Update → Run Job → open Job Run and confirm hasError = N.  If Y, read the error before continuing.
+Rebuild Search Indexes
+Navigate to: https://ip6-localhost:8443/commerce/control/SearchAdmin
+Click Refresh All Index
+Click Create Product Index — no fields required, just click Create
+Click Create Order Index — no fields required, just click Create
+Final Verification
+Open the Product Page — imported products should be visible
+Open the Order Page — imported orders should be visible
+
+Troubleshooting  If nothing appears, check the Maarg terminal logs for ERROR or WARN entries related to the import jobs and trace back to the relevant step above.
+
+
